@@ -46,18 +46,29 @@ class MyHandler(http.server.SimpleHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(b'''
             <!doctype html>
-            <title>NDC to RXCUI Converter</title>
-            <h1>NDC to RXCUI Converter</h1>
-            <form method="post">
-                <label for="ndc" title="National Drug Code (NDC) is a unique identifier for medicines in the United States.">NDC:</label>
-                <input type="text" name="ndc">
-                <br>
-                <input type="checkbox" name="show_urls" value="yes">
-                <label for="show_urls">Show API URLs</label>
-                <br>
-                <input type="submit" value="Convert">
-            </form>
-            <p><a href="https://github.com/your-username/terminology-data-tools" target="_blank">Python Script Behind This Webpage: Terminology Data Tools Repository</a></p>
+            <html>
+            <head>
+                <title>NDC to RXCUI Converter</title>
+                <style>
+                    body {
+                        text-align: center;
+                    }
+                </style>
+            </head>
+            <body>
+                <h1>NDC to RXCUI Converter</h1>
+                <form method="post">
+                    <label for="ndc" title="National Drug Code (NDC) is a unique identifier for medicines in the United States.">NDC:</label>
+                    <input type="text" name="ndc">
+                    <br>
+                    <input type="checkbox" name="show_urls" value="yes">
+                    <label for="show_urls">Show API URLs</label>
+                    <br>
+                    <input type="submit" value="Convert">
+                </form>
+                <p><a href="https://github.com/your-username/terminology-data-tools" target="_blank">Python Script Behind This Webpage: Terminology Data Tools Repository</a></p>
+            </body>
+            </html>
         ''')
 
     # Handle POST requests
@@ -92,40 +103,50 @@ class MyHandler(http.server.SimpleHTTPRequestHandler):
             }
             response = f'''
                 <!doctype html>
-                <title>NDC to RXCUI Converter</title>
-                <h1>NDC to RXCUI Converter</h1>
-                <form method="post">
-                    <label for="ndc" title="National Drug Code (NDC) is a unique identifier for medicines in the United States.">NDC:</label>
-                    <input type="text" name="ndc">
-                    <br>
-                    <input type="checkbox" name="show_urls" value="yes" {'checked' if show_urls else ''}>
-                    <label for="show_urls">Show API URLs</label>
-                    <br>
-                    <input type="submit" value="Convert">
-                </form>
-                <form method="post" action="/download_json">
-                    <input type="hidden" name="ndc" value="{ndc}">
-                    <input type="hidden" name="rxcui" value="{rxcui}">
-                    <input type="hidden" name="term_type" value="{properties['tty']}">
-                    <input type="hidden" name="name" value="{properties['name']}">
-                    <input type="hidden" name="ndc_url" value="{ndc_url}">
-                    <input type="hidden" name="rxcui_url" value="{rxcui_url}">
-                    <input type="submit" value="Download Results as JSON">
-                </form>
-                <h2>The RXCUI for NDC {ndc} is {rxcui}</h2>
-                <h3>Term Type (TTY): {properties['tty']}</h3>
-                <button type="button" onclick="toggleTermTypes()">Show Term Types</button>
-                <div id="termTypes" style="display:none;">
-                    <p><strong>BN:</strong> Brand Name</p>
-                    <p><strong>IN:</strong> Ingredient</p>
-                    <p><strong>PIN:</strong> Precise Ingredient</p>
-                    <p><strong>MIN:</strong> Multiple Ingredients</p>
-                    <p><strong>SCD:</strong> Semantic Clinical Drug</p>
-                    <p><strong>SBD:</strong> Semantic Branded Drug</p>
-                    <p><strong>GPCK:</strong> Generic Pack</p>
-                    <p><strong>BPCK:</strong> Branded Pack</p>
-                </div>
-                <h3>Name: {properties['name']}</h3>
+                <html>
+                <head>
+                    <title>NDC to RXCUI Converter</title>
+                    <style>
+                        body {{
+                            text-align: center;
+                        }}
+                    </style>
+                </head>
+                <body>
+                    <h1>NDC to RXCUI Converter</h1>
+                    <form method="post">
+                        <label for="ndc" title="National Drug Code (NDC) is a unique identifier for medicines in the United States.">NDC:</label>
+                        <input type="text" name="ndc">
+                        <br>
+                        <input type="checkbox" name="show_urls" value="yes" {'checked' if show_urls else ''}>
+                        <label for="show_urls">Show API URLs</label>
+                        <br>
+                        <input type="submit" value="Convert">
+                    </form>
+                    <form method="post" action="/download_json">
+                        <input type="hidden" name="ndc" value="{ndc}">
+                        <input type="hidden" name="rxcui" value="{rxcui}">
+                        <input type="hidden" name="term_type" value="{properties['tty']}">
+                        <input type="hidden" name="name" value="{properties['name']}">
+                        <input type="hidden" name="ndc_url" value="{ndc_url}">
+                        <input type="hidden" name="rxcui_url" value="{rxcui_url}">
+                        <input type="submit" value="Download Results as JSON">
+                    </form>
+                    <h2>The RXCUI for NDC {ndc} is {rxcui}</h2>
+                    <h3>Term Type (TTY): {properties['tty']}</h3>
+                    <button type="button" onclick="toggleTermTypes()">Show Term Types</button>
+                    <div id="termTypes" style="display:none;">
+                        <p><strong>BN:</strong> Brand Name</p>
+                        <p><strong>IN:</strong> Ingredient</p>
+                        <p><strong>PIN:</strong> Precise Ingredient</p>
+                        <p><strong>MIN:</strong> Multiple Ingredients</p>
+                        <p><strong>SCD:</strong> Semantic Clinical Drug</p>
+                        <p><strong>SBD:</strong> Semantic Branded Drug</p>
+                        <p><strong>GPCK:</strong> Generic Pack</p>
+                        <p><strong>BPCK:</strong> Branded Pack</p>
+                    </div>
+                    <h3>Name: {properties['name']}</h3>
+                    <p>View in RxNav: <a href="https://mor.nlm.nih.gov/RxNav/search?searchBy=RXCUI&searchTerm={rxcui}" target="_blank">RxNav Result</a></p>
             '''
             if show_urls:
                 response += f'''
@@ -134,34 +155,47 @@ class MyHandler(http.server.SimpleHTTPRequestHandler):
                     <p>API Documentation: <a href="https://rxnav.nlm.nih.gov/RxNormAPIs.html" target="_blank">RxNorm API Documentation</a></p>
                 '''
             response += '''
-                <p><a href="https://github.com/your-username/terminology-data-tools" target="_blank">Python Script Behind This Webpage: Terminology Data Tools Repository</a></p>
-                <script>
-                    function toggleTermTypes() {
-                        var x = document.getElementById("termTypes");
-                        if (x.style.display === "none") {
-                            x.style.display = "block";
-                        } else {
-                            x.style.display = "none";
+                    <p><a href="https://github.com/your-username/terminology-data-tools" target="_blank">Python Script Behind This Webpage: Terminology Data Tools Repository</a></p>
+                    <script>
+                        function toggleTermTypes() {
+                            var x = document.getElementById("termTypes");
+                            if (x.style.display === "none") {
+                                x.style.display = "block";
+                            } else {
+                                x.style.display = "none";
+                            }
                         }
-                    }
-                </script>
+                    </script>
+                </body>
+                </html>
             '''
         except Exception as e:
             response = f'''
                 <!doctype html>
-                <title=NDC to RXCUI Converter</title>
-                <h1>NDC to RXCUI Converter</h1>
-                <form method="post">
-                    <label for="ndc" title="National Drug Code (NDC) is a unique identifier for medicines in the United States.">NDC:</label>
-                    <input type="text" name="ndc">
-                    <br>
-                    <input type="checkbox" name="show_urls" value="yes" {'checked' if show_urls else ''}>
-                    <label for="show_urls">Show API URLs</label>
-                    <br>
-                    <input type="submit" value="Convert">
-                </form>
-                <h2>Error: {str(e)}</h2>
-                <p><a href="https://github.com/your-username/terminology-data-tools" target="_blank">Python Script Behind This Webpage: Terminology Data Tools Repository</a></p>
+                <html>
+                <head>
+                    <title>NDC to RXCUI Converter</title>
+                    <style>
+                        body {{
+                            text-align: center;
+                        }}
+                    </style>
+                </head>
+                <body>
+                    <h1>NDC to RXCUI Converter</h1>
+                    <form method="post">
+                        <label for="ndc" title="National Drug Code (NDC) is a unique identifier for medicines in the United States.">NDC:</label>
+                        <input type="text" name="ndc">
+                        <br>
+                        <input type="checkbox" name="show_urls" value="yes" {'checked' if show_urls else ''}>
+                        <label for="show_urls">Show API URLs</label>
+                        <br>
+                        <input type="submit" value="Convert">
+                    </form>
+                    <h2>Error: {str(e)}</h2>
+                    <p><a href="https://github.com/your-username/terminology-data-tools" target="_blank">Python Script Behind This Webpage: Terminology Data Tools Repository</a></p>
+                </body>
+                </html>
             '''
         
         self.wfile.write(response.encode('utf-8'))
