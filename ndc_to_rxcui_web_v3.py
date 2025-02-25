@@ -66,7 +66,7 @@ class MyHandler(http.server.SimpleHTTPRequestHandler):
                     <br>
                     <input type="submit" value="Convert">
                 </form>
-                <p><a href="https://github.com/your-username/terminology-data-tools" target="_blank">Python Script Behind This Webpage: Terminology Data Tools Repository</a></p>
+                <p><a href="https://github.com/erinsim/terminology-data-tools" target="_blank">Python Script Behind This Webpage: Terminology Data Tools Repository</a></p>
             </body>
             </html>
         ''')
@@ -155,7 +155,7 @@ class MyHandler(http.server.SimpleHTTPRequestHandler):
                     <p>API Documentation: <a href="https://rxnav.nlm.nih.gov/RxNormAPIs.html" target="_blank">RxNorm API Documentation</a></p>
                 '''
             response += '''
-                    <p><a href="https://github.com/your-username/terminology-data-tools" target="_blank">Python Script Behind This Webpage: Terminology Data Tools Repository</a></p>
+                    <p><a href="https://github.com/erinsim/terminology-data-tools" target="_blank">Python Script Behind This Webpage: Terminology Data Tools Repository</a></p>
                     <script>
                         function toggleTermTypes() {
                             var x = document.getElementById("termTypes");
@@ -193,7 +193,7 @@ class MyHandler(http.server.SimpleHTTPRequestHandler):
                         <input type="submit" value="Convert">
                     </form>
                     <h2>Error: {str(e)}</h2>
-                    <p><a href="https://github.com/your-username/terminology-data-tools" target="_blank">Python Script Behind This Webpage: Terminology Data Tools Repository</a></p>
+                    <p><a href="https://github.com/erinsim/terminology-data-tools" target="_blank">Python Script Behind This Webpage: Terminology Data Tools Repository</a></p>
                 </body>
                 </html>
             '''
