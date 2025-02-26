@@ -18,29 +18,24 @@ def rxcui_to_ndc(rxcui):
     data = response.json()
     
     if 'ndcGroup' in data and 'ndcList' in data['ndcGroup'] and 'ndc' in data['ndcGroup']['ndcList']:
-        ndcs = data['ndcGroup']['ndcList']['ndc']
-        ndc_names = []
-        for ndc in ndcs:
-            ndc_name = get_ndc_name(ndc)
-            ndc_names.append((ndc, ndc_name))
-        return ndc_names, url
+        return data['ndcGroup']['ndcList']['ndc'], url
     else:
         raise Exception("NDC not found for the given RXCUI")
 
-# Function to get the drug name for a given NDC using the RxNorm API
-def get_ndc_name(ndc):
-    url = f"https://rxnav.nlm.nih.gov/REST/ndcstatus.json?ndc={ndc}"
+# Function to get the drug name and term type for a given RXCUI using the RxNorm API
+def get_rxcui_info(rxcui):
+    url = f"https://rxnav.nlm.nih.gov/REST/rxcui/{rxcui}/properties.json"
     response = requests.get(url)
     
     if response.status_code != 200:
-        return "Unknown"
+        return "Unknown", "Unknown"
     
     data = response.json()
     
-    if 'ndcStatus' in data and 'active' in data['ndcStatus'] and 'name' in data['ndcStatus']['active']:
-        return data['ndcStatus']['active']['name']
+    if 'properties' in data and 'name' in data['properties'] and 'tty' in data['properties']:
+        return data['properties']['name'], data['properties']['tty']
     else:
-        return "Unknown"
+        return "Unknown", "Unknown"
 
 # Define a request handler class for the HTTP server
 class MyHandler(http.server.SimpleHTTPRequestHandler):
@@ -71,7 +66,7 @@ class MyHandler(http.server.SimpleHTTPRequestHandler):
                     <br>
                     <input type="submit" value="Convert">
                 </form>
-                <p><a href="https://github.com/your-username/terminology-data-tools" target="_blank">Python Script Behind This Webpage: Terminology Data Tools Repository</a></p>
+                <p><a href="https://github.com/erinsim/terminology-data-tools" target="_blank">Python Script Behind This Webpage: Terminology Data Tools Repository</a></p>
             </body>
             </html>
         ''')
@@ -89,7 +84,9 @@ class MyHandler(http.server.SimpleHTTPRequestHandler):
         self.end_headers()
 
         try:
-            ndc_names, api_url = rxcui_to_ndc(rxcui)
+            ndcs, api_url = rxcui_to_ndc(rxcui)
+            drug_name, term_type = get_rxcui_info(rxcui)
+            ndc_list = ', '.join(ndcs)
             response = f'''
                 <!doctype html>
                 <html>
@@ -112,19 +109,16 @@ class MyHandler(http.server.SimpleHTTPRequestHandler):
                         <br>
                         <input type="submit" value="Convert">
                     </form>
-                    <h2>The NDCs for RXCUI {rxcui} are:</h2>
-                    <ul>
+                    <h2>The NDCs for RXCUI {rxcui} ({drug_name}, {term_type}) are:</h2>
+                    <p>{ndc_list}</p>
             '''
-            for ndc, name in ndc_names:
-                response += f'<li>{ndc} - {name}</li>'
-            response += '</ul>'
             if show_urls:
                 response += f'''
                     <p>API URL used: <a href="{api_url}" target="_blank">{api_url}</a></p>
                     <p>API Documentation: <a href="https://rxnav.nlm.nih.gov/RxNormAPIs.html" target="_blank">RxNorm API Documentation</a></p>
                 '''
             response += '''
-                <p><a href="https://github.com/your-username/terminology-data-tools" target="_blank">Python Script Behind This Webpage: Terminology Data Tools Repository</a></p>
+                <p><a href="https://github.com/erinsim/terminology-data-tools" target="_blank">Python Script Behind This Webpage: Terminology Data Tools Repository</a></p>
                 </body>
                 </html>
             '''
@@ -152,7 +146,7 @@ class MyHandler(http.server.SimpleHTTPRequestHandler):
                         <input type="submit" value="Convert">
                     </form>
                     <h2>Error: {str(e)}</h2>
-                    <p><a href="https://github.com/your-username/terminology-data-tools" target="_blank">Python Script Behind This Webpage: Terminology Data Tools Repository</a></p>
+                    <p><a href="https://github.com/erinsim/terminology-data-tools" target="_blank">Python Script Behind This Webpage: Terminology Data Tools Repository</a></p>
                 </body>
                 </html>
             '''
