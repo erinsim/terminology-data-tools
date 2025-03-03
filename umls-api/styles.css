@@ -1,0 +1,121 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f9;
+    color: #333;
+  }
+  h1 {
+    text-align: center;
+    margin: 20px 0;
+  }
+  .container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+  }
+  label {
+    display: block;
+    margin: 10px 0 5px;
+  }
+  input, select, button {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  button:hover {
+    background-color: #0056b3;
+  }
+  .recent-request {
+    margin: 20px 0;
+    padding: 10px;
+    background: #eef;
+    border: 1px solid #bbd;
+    border-radius: 5px;
+  }
+  .recent-request strong {
+    font-size: 1.2em;
+  }
+  .recent-request pre {
+    font-size: 1.2em !important;
+  }
+  .results {
+    margin-top: 20px;
+    padding: 10px;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    display: flex;
+    gap: 20px;
+  }
+  .results-column {
+    flex: 1;
+    overflow-x: auto;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  table th, table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  table th {
+    background-color: #f4f4f9;
+  }
+  pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    max-width: 100%;
+  }
+  .vocab-container {
+    display: none;
+    margin: 10px 0;
+  }
+  .vocab-container label {
+    display: inline-block;
+    margin-right: 10px;
+  }
+  #cui-options-modal {
+    display: none;
+    position: fixed;
+    top: 25%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #fff;
+    border: 2px solid #aaa;
+    padding: 20px;
+    z-index: 9999;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+  }
+  #cui-options-modal h3 {
+    margin-top: 0;
+  }
+  #cui-options-modal button {
+    width: auto;
+    margin-right: 10px;
+  }
+  #modal-backdrop {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 9998;
+  }
+  
