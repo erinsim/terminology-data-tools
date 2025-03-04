@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UMLS API Interface</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h1>UMLS API Interface</h1>
+
+  <div id="modal-backdrop"></div>
+  <div id="cui-options-modal">
+    <h3>Select an action for <span id="selected-cui">CUI</span></h3>
+    <button onclick="fetchConceptDetails(modalCurrentCUI, 'atoms')">Atoms</button>
+    <button onclick="fetchConceptDetails(modalCurrentCUI, 'relations')">Relations</button>
+    <button onclick="fetchConceptDetails(modalCurrentCUI, 'definitions')">Definitions</button>
+    <hr>
+    <button onclick="closeCuiOptionsModal()">Close</button>
+  </div>
+
+  <div class="container">
+    <label for="api-key">API Key</label>
+    <input type="password" id="api-key" placeholder="Enter your UMLS API key" value="YOUR_API_KEY_HERE" required>
+
+    <label for="query">Search Term</label>
+    <input type="text" id="query" placeholder="Enter a search term" required autocomplete="off">
+
+    <label for="return-id-type">Return ID Type</label>
+    <select id="return-id-type">
+      <option value="concept">Concept (default)</option>
+      <option value="code">Code</option>
+    </select>
+
+    <div id="vocab-container" class="vocab-container">
+      <label>Vocabularies:</label>
+      <label>LNC <input type="checkbox" value="LNC"></label>
+      <label>ICD10CM <input type="checkbox" value="ICD10CM"></label>
+      <label>MSH <input type="checkbox" value="MSH"></label>
+      <label>SNOMEDCT_US <input type="checkbox" value="SNOMEDCT_US"></label>
+      <label>CPT <input type="checkbox" value="CPT"></label>
+    </div>
+
+    <button onclick="searchUMLS()">Search</button>
+
+    <div class="recent-request" id="recent-request">
+      <strong>Most Recent Request:</strong>
+      <pre id="recent-request-output">No requests made yet...</pre>
+    </div>
+
+    <div class="results" id="results">
+      <div class="results-column">
+        <h3>Raw Data</h3>
+        <pre id="output">No results yet...</pre>
+      </div>
+      <div class="results-column">
+        <h3>Information</h3>
+        <table id="info-table">
+          <thead>
+            <tr>
+              <th>UI</th>
+              <th>Name</th>
+              <th id="root-source-header" style="display: none;">Root Source</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="3">No information yet...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
