@@ -5,6 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>UMLS API Interface</title>
   <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Add some basic styles for the collapsible section */
+    .collapsible {
+      cursor: pointer;
+      color: blue;
+      text-decoration: underline;
+      background: none;
+      border: none;
+      font-size: 1em;
+      padding: 0;
+    }
+    .collapsible-content {
+      display: none;
+      margin-top: 10px;
+    }
+  </style>
 </head>
 <body>
   <h1>UMLS API Interface</h1>
@@ -22,7 +38,10 @@
   <div class="container">
     <label for="api-key">API Key</label>
     <input type="password" id="api-key" placeholder="Enter your UMLS API key" value="YOUR_API_KEY_HERE" required>
-    <p>To get an API key, you need to register for a UMLS account at the <a href="https://uts.nlm.nih.gov/uts/signup-login" target="_blank">UMLS Terminology Services</a> website. Once registered, you can find your API key in your profile settings.</p>
+    <button class="collapsible" onclick="toggleCollapsible()">Don't have an API key?</button>
+    <div class="collapsible-content" id="api-key-info">
+      <p>To get an API key, you need to register for a UMLS account at the <a href="https://uts.nlm.nih.gov/uts/signup-login" target="_blank">UMLS Terminology Services</a> website. Once registered, you can find your API key in your profile settings.</p>
+    </div>
 
     <label for="query">Search Term</label>
     <input type="text" id="query" placeholder="Enter a search term" required autocomplete="off">
@@ -72,5 +91,16 @@
     </div>
   </div>
   <script src="script.js"></script>
+  <script>
+    // Function to toggle the visibility of the collapsible content
+    function toggleCollapsible() {
+      const content = document.getElementById("api-key-info");
+      if (content.style.display === "none" || content.style.display === "") {
+        content.style.display = "block"; // Show the content
+      } else {
+        content.style.display = "none"; // Hide the content
+      }
+    }
+  </script>
 </body>
 </html>

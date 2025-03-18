@@ -1,109 +1,128 @@
+// Wait for the page to fully load before running the script
 window.addEventListener("DOMContentLoaded", function () {
+    // Get the parameters from the URL (e.g., API key, search term, etc.)
     const params = new URLSearchParams(window.location.search);
-    const apiKey = params.get("apiKey");
-    const searchString = params.get("string"); // using "string" per UMLS API
-    const returnIdType = params.get("returnIdType");
-    const sabs = params.get("sabs");
+    const apiKey = params.get("apiKey"); // API key for authentication
+    const searchString = params.get("string"); // Search term entered by the user
+    const returnIdType = params.get("returnIdType"); // Type of ID to return (e.g., concept or code)
+    const sabs = params.get("sabs"); // Selected vocabularies (if any)
+
+    // If an API key is provided in the URL, set it in the input field
     if (apiKey) {
-      document.getElementById("api-key").value = apiKey;
+        document.getElementById("api-key").value = apiKey;
     }
+
+    // If a search term is provided in the URL, set it in the search input field
     if (searchString) {
-      document.getElementById("query").value = searchString;
+        document.getElementById("query").value = searchString;
     }
+
+    // If a return ID type is provided, set it in the dropdown and trigger a change event
     if (returnIdType) {
-      document.getElementById("return-id-type").value = returnIdType;
-      document.getElementById("return-id-type").dispatchEvent(new Event("change"));
+        document.getElementById("return-id-type").value = returnIdType;
+        document.getElementById("return-id-type").dispatchEvent(new Event("change"));
     }
+
+    // If vocabularies are provided, check the corresponding checkboxes
     if (sabs) {
-      const vocabArray = sabs.split(",");
-      document.querySelectorAll("#vocab-container input").forEach(checkbox => {
-        if (vocabArray.includes(checkbox.value)) {
-          checkbox.checked = true;
-        }
-      });
+        const vocabArray = sabs.split(","); // Split the vocabularies into an array
+        document.querySelectorAll("#vocab-container input").forEach(checkbox => {
+            if (vocabArray.includes(checkbox.value)) {
+                checkbox.checked = true; // Check the box if it matches
+            }
+        });
     }
-  });
-  
-  function stripBaseUrl(fullUrl) {
-    if (!fullUrl) return "";
-    const parts = fullUrl.split("/");
-    return parts.length ? parts[parts.length - 1] : fullUrl;
-  }
-  
-  let modalCurrentData = { ui: null, sab: null };
-  
-  function openCuiOptionsModal(ui, sab) {
-    modalCurrentData.ui = ui;
-    if (sab) {
-      modalCurrentData.sab = sab;
-    } else {
-      modalCurrentData.sab = null;
-    }
-    const returnIdType = document.getElementById("return-id-type").value;
-    const modalDiv = document.getElementById("cui-options-modal");
+});
+
+// A helper function to extract the last part of a URL (e.g., the ID or endpoint)
+function stripBaseUrl(fullUrl) {
+    if (!fullUrl) return ""; // Return an empty string if the URL is missing
+    const parts = fullUrl.split("/"); // Split the URL into parts
+    return parts.length ? parts[parts.length - 1] : fullUrl; // Return the last part
+}
+
+// Store the current data for the modal (e.g., selected CUI and vocabulary)
+let modalCurrentData = { ui: null, sab: null };
+
+// Open a modal window to show options for a selected CUI
+function openCuiOptionsModal(ui, sab) {
+    modalCurrentData.ui = ui; // Store the selected CUI
+    modalCurrentData.sab = sab || null; // Store the vocabulary if provided
+
+    const returnIdType = document.getElementById("return-id-type").value; // Get the return ID type
+    const modalDiv = document.getElementById("cui-options-modal"); // Get the modal element
+
+    // Update the modal content based on the return ID type
     if (returnIdType === "concept") {
-      modalDiv.innerHTML = `
-        <h3>Select an action for <span id="selected-cui">${ui}</span></h3>
-        <button onclick="fetchConceptDetails(modalCurrentData.ui, 'atoms')">Atoms</button>
-        <button onclick="fetchConceptDetails(modalCurrentData.ui, 'relations')">Relations</button>
-        <button onclick="fetchConceptDetails(modalCurrentData.ui, 'definitions')">Definitions</button>
-        <hr>
-        <button onclick="closeCuiOptionsModal()">Close</button>
-      `;
+        modalDiv.innerHTML = `
+            <h3>Select an action for <span id="selected-cui">${ui}</span></h3>
+            <button onclick="fetchConceptDetails(modalCurrentData.ui, 'atoms')">Atoms</button>
+            <button onclick="fetchConceptDetails(modalCurrentData.ui, 'relations')">Relations</button>
+            <button onclick="fetchConceptDetails(modalCurrentData.ui, 'definitions')">Definitions</button>
+            <hr>
+            <button onclick="closeCuiOptionsModal()">Close</button>
+        `;
     } else if (returnIdType === "code") {
-      modalDiv.innerHTML = `
-        <h3>Select an action for <span id="selected-cui">${ui}</span></h3>
-        <button onclick="fetchConceptDetails(modalCurrentData.ui, 'atoms')">Atoms</button>
-        <button onclick="fetchConceptDetails(modalCurrentData.ui, 'relations')">Relations</button>
-        <hr>
-        <button onclick="closeCuiOptionsModal()">Close</button>
-      `;
+        modalDiv.innerHTML = `
+            <h3>Select an action for <span id="selected-cui">${ui}</span></h3>
+            <button onclick="fetchConceptDetails(modalCurrentData.ui, 'atoms')">Atoms</button>
+            <button onclick="fetchConceptDetails(modalCurrentData.ui, 'relations')">Relations</button>
+            <hr>
+            <button onclick="closeCuiOptionsModal()">Close</button>
+        `;
     }
+
+    // Show the modal and its backdrop
     document.getElementById("modal-backdrop").style.display = "block";
     modalDiv.style.display = "block";
-  }
-  
-  function closeCuiOptionsModal() {
-    modalCurrentData = { ui: null, sab: null };
-    document.getElementById("selected-cui").textContent = "";
-    document.getElementById("modal-backdrop").style.display = "none";
-    document.getElementById("cui-options-modal").style.display = "none";
-  }
-  
-  document.getElementById("return-id-type").addEventListener("change", function () {
-    const vocabContainer = document.getElementById("vocab-container");
-    const rootSourceHeader = document.getElementById("root-source-header");
+}
+
+// Close the modal window and reset its data
+function closeCuiOptionsModal() {
+    modalCurrentData = { ui: null, sab: null }; // Reset the modal data
+    document.getElementById("selected-cui").textContent = ""; // Clear the selected CUI
+    document.getElementById("modal-backdrop").style.display = "none"; // Hide the backdrop
+    document.getElementById("cui-options-modal").style.display = "none"; // Hide the modal
+}
+
+// Show or hide the vocabularies section based on the selected return ID type
+document.getElementById("return-id-type").addEventListener("change", function () {
+    const vocabContainer = document.getElementById("vocab-container"); // Get the vocabularies container
+    const rootSourceHeader = document.getElementById("root-source-header"); // Get the root source header
+
     if (this.value === "code") {
-      vocabContainer.style.display = "block";
-      rootSourceHeader.style.display = "";
+        vocabContainer.style.display = "block"; // Show vocabularies for "code"
+        rootSourceHeader.style.display = ""; // Show the root source header
     } else {
-      vocabContainer.style.display = "none";
-      rootSourceHeader.style.display = "none";
+        vocabContainer.style.display = "none"; // Hide vocabularies for "concept"
+        rootSourceHeader.style.display = "none"; // Hide the root source header
     }
-  });
-  
-  function getSelectedVocabularies() {
+});
+
+// Get a list of selected vocabularies from the checkboxes
+function getSelectedVocabularies() {
     return Array.from(document.querySelectorAll("#vocab-container input:checked")).map(
-      checkbox => checkbox.value
+        checkbox => checkbox.value // Return the value of each checked box
     );
-  }
-  
-  function colorizeUrl(urlObject) {
-    const base = urlObject.origin + urlObject.pathname;
-    let colorized = `<span style="color:blue">${base}</span>`;
+}
+
+// Format a URL with color-coded parts for display
+function colorizeUrl(urlObject) {
+    const base = urlObject.origin + urlObject.pathname; // Get the base URL
+    let colorized = `<span style="color:blue">${base}</span>`; // Color the base URL in blue
     const params = [];
     for (let [key, value] of urlObject.searchParams.entries()) {
-      params.push(
-        `<span style="color:green">${encodeURIComponent(key)}</span>=<span style="color:red">${encodeURIComponent(value)}</span>`
-      );
+        params.push(
+            `<span style="color:green">${encodeURIComponent(key)}</span>=<span style="color:red">${encodeURIComponent(value)}</span>`
+        ); // Color the keys in green and the values in red
     }
     if (params.length > 0) {
-      colorized += `?${params.join("&")}`;
+        colorized += `?${params.join("&")}`; // Add the parameters to the URL
     }
-    return colorized;
-  }
-  
-  async function searchUMLS() {
+    return colorized; // Return the formatted URL
+}
+
+async function searchUMLS() {
     const apiKey = document.getElementById("api-key").value.trim();
     const searchString = document.getElementById("query").value.trim();
     const returnIdType = document.getElementById("return-id-type").value;
@@ -388,4 +407,3 @@ window.addEventListener("DOMContentLoaded", function () {
       infoTableBody.innerHTML = `<tr><td colspan="2">Error loading related ${relatedType}.</td></tr>`;
     }
   }
-  
