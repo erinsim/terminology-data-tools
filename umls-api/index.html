@@ -25,9 +25,15 @@
     #api-key {
       width: 300px; /* Adjust the width as needed */
     }
-    /* Ensure the search input field has a minimum width */
+    /* Make the search term input box the same size as the API key input box */
     #query {
-      min-width: 150px;
+      width: 300px; /* Match the width of the API key input field */
+      min-height: 30px; /* Set a default height */
+      resize: vertical; /* Allow the user to resize the box vertically */
+    }
+    /* Make the dropdown box the same size as the API key input field */
+    #return-id-type {
+      width: 300px; /* Match the width of the API key input field */
     }
   </style>
 </head>
@@ -47,13 +53,17 @@
   <div class="container">
     <label for="api-key">API Key</label>
     <input type="password" id="api-key" placeholder="Enter your UMLS API key" value="YOUR_API_KEY_HERE" required>
-    <button class="collapsible" onclick="toggleCollapsible()">Don't have an API key?</button>
+    <button class="collapsible" onclick="toggleCollapsible('api-key-info')">Don't have an API key?</button>
     <div class="collapsible-content" id="api-key-info">
       <p>To get an API key, you need to register for a UMLS account at the <a href="https://uts.nlm.nih.gov/uts/signup-login" target="_blank">UMLS Terminology Services</a> website. Once registered, you can find your API key in your profile settings.</p>
     </div>
 
     <label for="query">Search Term</label>
-    <input type="text" id="query" placeholder="Enter a search term or identifier" required autocomplete="off" oninput="adjustInputWidth(this)">
+    <textarea id="query" placeholder="Enter a search term or identifier" required></textarea>
+    <button class="collapsible" onclick="toggleCollapsible('search-info')">What can I search?</button>
+    <div class="collapsible-content" id="search-info">
+      <p>You can search for terms, identifiers, or codes from various vocabularies such as SNOMED CT, LOINC, ICD-10-CM, and more. For example, try searching for "diabetes" or "C0011849" (a UMLS Concept Unique Identifier).</p>
+    </div>
 
     <label for="return-id-type">Return ID Type</label>
     <select id="return-id-type">
@@ -101,19 +111,14 @@
   </div>
   <script src="script.js"></script>
   <script>
-    // Function to toggle the visibility of the collapsible content
-    function toggleCollapsible() {
-      const content = document.getElementById("api-key-info");
+    // Function to toggle the visibility of collapsible content
+    function toggleCollapsible(contentId) {
+      const content = document.getElementById(contentId);
       if (content.style.display === "none" || content.style.display === "") {
         content.style.display = "block"; // Show the content
       } else {
         content.style.display = "none"; // Hide the content
       }
-    }
-
-    // Function to adjust the width of the search input field dynamically
-    function adjustInputWidth(input) {
-      input.style.width = `${Math.max(input.value.length * 10, 150)}px`; // Adjust width based on text length
     }
   </script>
 </body>
