@@ -21,6 +21,14 @@
       display: none;
       margin-top: 10px;
     }
+    /* Make the API key input field smaller */
+    #api-key {
+      width: 300px; /* Adjust the width as needed */
+    }
+    /* Ensure the search input field has a minimum width */
+    #query {
+      min-width: 150px;
+    }
   </style>
 </head>
 <body>
@@ -45,7 +53,7 @@
     </div>
 
     <label for="query">Search Term</label>
-    <input type="text" id="query" placeholder="Enter a search term or identifier" required autocomplete="off">
+    <input type="text" id="query" placeholder="Enter a search term or identifier" required autocomplete="off" oninput="adjustInputWidth(this)">
 
     <label for="return-id-type">Return ID Type</label>
     <select id="return-id-type">
@@ -101,6 +109,11 @@
       } else {
         content.style.display = "none"; // Hide the content
       }
+    }
+
+    // Function to adjust the width of the search input field dynamically
+    function adjustInputWidth(input) {
+      input.style.width = `${Math.max(input.value.length * 10, 150)}px`; // Adjust width based on text length
     }
   </script>
 </body>
