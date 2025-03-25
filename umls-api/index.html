@@ -35,6 +35,11 @@
     #return-id-type {
       width: 300px; /* Match the width of the API key input field */
     }
+    /* Style the search button to make it smaller */
+    #search-button {
+      padding: 5px 10px; /* Adjust padding for a smaller button */
+      font-size: 0.9em; /* Reduce font size */
+    }
   </style>
 </head>
 <body>
@@ -80,7 +85,7 @@
       <label>CPT <input type="checkbox" value="CPT"></label>
     </div>
 
-    <button onclick="searchUMLS()">Search</button>
+    <button id="search-button" onclick="searchUMLS()">Search</button>
 
     <div class="recent-request" id="recent-request">
       <strong>Most Recent Request:</strong>
