@@ -28,8 +28,6 @@
     /* Make the search term input box the same size as the API key input box */
     #query {
       width: 300px; /* Match the width of the API key input field */
-      min-height: 30px; /* Set a default height */
-      resize: vertical; /* Allow the user to resize the box vertically */
     }
     /* Make the dropdown box the same size as the API key input field */
     #return-id-type {
@@ -39,6 +37,34 @@
     #search-button {
       padding: 5px 10px; /* Adjust padding for a smaller button */
       font-size: 0.9em; /* Reduce font size */
+      width: 150px; /* Set a smaller width */
+      margin-top: 10px; /* Add spacing above the button */
+    }
+    /* Style for the results container */
+    .results {
+      display: flex;
+      flex-direction: row; /* Arrange columns horizontally */
+      justify-content: space-between;
+      transition: all 0.3s ease; /* Smooth transition for layout changes */
+    }
+    .results-column {
+      flex: 1; /* Allow columns to take equal space */
+      margin: 10px;
+    }
+    .raw-data-container {
+      flex: 1; /* Allow raw data to take equal space */
+      transition: all 0.3s ease; /* Smooth transition for collapsing */
+    }
+    .raw-data-hidden {
+      flex: 0; /* Collapse raw data to zero width */
+      overflow: hidden; /* Hide content when collapsed */
+    }
+    .formatted-data {
+      flex: 2; /* Expand formatted data when raw data is collapsed */
+      transition: all 0.3s ease; /* Smooth transition for layout changes */
+    }
+    .results-centered {
+      justify-content: center; /* Center the formatted data when raw data is hidden */
     }
   </style>
 </head>
@@ -64,7 +90,7 @@
     </div>
 
     <label for="query">Search Term</label>
-    <textarea id="query" placeholder="Enter a search term or identifier" required></textarea>
+    <input type="text" id="query" placeholder="Enter a search term or identifier" required>
     <button class="collapsible" onclick="toggleCollapsible('search-info')">What can I search?</button>
     <div class="collapsible-content" id="search-info">
       <p>You can search for terms, identifiers, or codes from various vocabularies such as SNOMED CT, LOINC, ICD-10-CM, and more. For example, try searching for "diabetes" or "C0011849" (a UMLS Concept Unique Identifier).</p>
@@ -76,6 +102,8 @@
       <option value="code">Code</option>
     </select>
 
+    <button id="search-button" onclick="searchUMLS()">Search</button>
+
     <div id="vocab-container" class="vocab-container">
       <label>Vocabularies:</label>
       <label>LNC <input type="checkbox" value="LNC"></label>
@@ -85,19 +113,20 @@
       <label>CPT <input type="checkbox" value="CPT"></label>
     </div>
 
-    <button id="search-button" onclick="searchUMLS()">Search</button>
-
     <div class="recent-request" id="recent-request">
       <strong>Most Recent Request:</strong>
       <pre id="recent-request-output">No requests made yet...</pre>
     </div>
 
     <div class="results" id="results">
-      <div class="results-column">
-        <h3>Raw Data</h3>
-        <pre id="output">No results yet...</pre>
+      <div class="results-column raw-data-container" id="raw-data-container">
+        <!-- Toggle button for collapsing/uncollapsing raw data -->
+        <button class="collapsible" id="toggle-raw-data-button" onclick="toggleRawData()">Hide Raw Data</button>
+        <div class="raw-data-content" id="raw-data-content">
+          <pre id="output">No results yet...</pre>
+        </div>
       </div>
-      <div class="results-column">
+      <div class="results-column formatted-data">
         <h3>Information</h3>
         <table id="info-table">
           <thead>
@@ -123,6 +152,23 @@
         content.style.display = "block"; // Show the content
       } else {
         content.style.display = "none"; // Hide the content
+      }
+    }
+
+    // Function to toggle the visibility of raw data and adjust layout
+    function toggleRawData() {
+      const rawDataContainer = document.getElementById("raw-data-container");
+      const results = document.getElementById("results");
+      const toggleButton = document.getElementById("toggle-raw-data-button");
+
+      if (rawDataContainer.classList.contains("raw-data-hidden")) {
+        rawDataContainer.classList.remove("raw-data-hidden");
+        results.classList.remove("results-centered");
+        toggleButton.textContent = "Hide Raw Data"; // Update button text
+      } else {
+        rawDataContainer.classList.add("raw-data-hidden");
+        results.classList.add("results-centered");
+        toggleButton.textContent = "Show Raw Data"; // Update button text
       }
     }
   </script>
