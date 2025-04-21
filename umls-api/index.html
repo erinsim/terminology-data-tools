@@ -83,19 +83,24 @@
 
   <div class="container">
     <label for="api-key">API Key</label>
-    <input type="password" id="api-key" placeholder="Enter your UMLS API key" required>
+    <input type="password" id="api-key" placeholder="Enter your UMLS API key" value="YOUR_API_KEY_HERE" required>
+    <button class="collapsible" onclick="toggleCollapsible('api-key-info')">Don't have an API key?</button>
+    <div class="collapsible-content" id="api-key-info">
+      <p>To get an API key, you need to register for a UMLS account at the <a href="https://uts.nlm.nih.gov/uts/signup-login" target="_blank">UMLS Terminology Services</a> website. Once registered, you can find your API key in your profile settings.</p>
+    </div>
 
     <label for="query">Search Term</label>
     <input type="text" id="query" placeholder="Enter a search term or identifier" required>
+    <button class="collapsible" onclick="toggleCollapsible('search-info')">What can I search?</button>
+    <div class="collapsible-content" id="search-info">
+      <p>You can search for terms, identifiers, or codes from various vocabularies such as SNOMED CT, LOINC, ICD-10-CM, and more. For example, try searching for "diabetes" or "C0011849" (a UMLS Concept Unique Identifier).</p>
+    </div>
 
     <label for="return-id-type">Return ID Type</label>
     <select id="return-id-type">
       <option value="concept">Concept (default)</option>
       <option value="code">Code</option>
     </select>
-
-    <label for="page-size">Page Size</label>
-    <input type="number" id="page-size" value="25" min="1" placeholder="Enter page size">
 
     <button id="search-button" onclick="searchUMLS()">Search</button>
 
