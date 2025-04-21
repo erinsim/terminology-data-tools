@@ -123,100 +123,43 @@ function colorizeUrl(urlObject) {
 }
 
 async function searchUMLS() {
-    const apiKey = document.getElementById("api-key").value.trim();
-    const searchString = document.getElementById("query").value.trim();
-    const returnIdType = document.getElementById("return-id-type").value;
-    const selectedVocabularies =
-      returnIdType === "code" ? getSelectedVocabularies() : [];
-  
-    if (!apiKey || !searchString) {
-      alert("Please enter both an API key and a search term.");
-      return;
-    }
-  
-    const params = new URLSearchParams();
-    params.set("string", searchString);
-    params.set("returnIdType", returnIdType);
-    if (selectedVocabularies.length > 0) {
-      params.set("sabs", selectedVocabularies.join(","));
-    }
-    window.history.pushState({}, "", "?" + params.toString());
-  
-    const resultsContainer = document.getElementById("output");
-    const infoTableBody = document.querySelector("#info-table tbody");
-    const recentRequestContainer = document.getElementById("recent-request-output");
-    const tableHead = document.querySelector("#info-table thead");
-  
-    resultsContainer.textContent = "Loading...";
-    tableHead.innerHTML = `<tr>
-        <th>UI</th>
-        <th>Name</th>
-        <th id="root-source-header" style="display: none;">Root Source</th>
-    </tr>`;
-    infoTableBody.innerHTML = '<tr><td colspan="3">No information yet...</td></tr>';
-  
-    const url = new URL("https://uts-ws.nlm.nih.gov/rest/search/current");
-    url.searchParams.append("string", searchString);
-    url.searchParams.append("returnIdType", returnIdType);
-    url.searchParams.append("apiKey", apiKey);
-    if (selectedVocabularies.length > 0) {
-      url.searchParams.append("sabs", selectedVocabularies.join(","));
-    }
-    const displayUrl = new URL(url);
-    displayUrl.searchParams.set("apiKey", "***");
-    recentRequestContainer.innerHTML = colorizeUrl(displayUrl);
-  
-    try {
-      const response = await fetch(url, {
-        method: "GET",
-        headers: { Accept: "application/json" }
-      });
-      const data = await response.json();
-  
-      resultsContainer.textContent = JSON.stringify(data, null, 2);
-  
-      infoTableBody.innerHTML = "";
-  
-      const results = data.result && data.result.results ? data.result.results : [];
-      if (results.length === 0) {
-        infoTableBody.innerHTML = '<tr><td colspan="3">No results found.</td></tr>';
-        return;
-      }
-  
-      results.forEach(item => {
-        const tr = document.createElement("tr");
-  
-        const uiTd = document.createElement("td");
-        if (returnIdType === "concept") {
-          uiTd.style.color = "blue";
-          uiTd.style.textDecoration = "underline";
-          uiTd.style.cursor = "pointer";
-          uiTd.textContent = item.ui || "N/A";
-          uiTd.addEventListener("click", () => {
-            openCuiOptionsModal(item.ui);
-          });
-        } else {
-          uiTd.textContent = item.ui || "N/A";
-        }
-        tr.appendChild(uiTd);
-  
-        const nameTd = document.createElement("td");
-        nameTd.textContent = item.name || "N/A";
-        tr.appendChild(nameTd);
-  
-        const rootSourceHeader = document.getElementById("root-source-header");
-        if (rootSourceHeader.style.display !== "none") {
-          const rootSourceTd = document.createElement("td");
-          rootSourceTd.textContent = item.rootSource || "N/A";
-          tr.appendChild(rootSourceTd);
-        }
-        infoTableBody.appendChild(tr);
-      });
-    } catch (error) {
-      resultsContainer.textContent = "Error fetching data: " + error;
-      infoTableBody.innerHTML = '<tr><td colspan="3">Error loading data.</td></tr>';
-    }
+  const apiKey = document.getElementById("api-key").value.trim();
+  const searchString = document.getElementById("query").value.trim();
+  const returnIdType = document.getElementById("return-id-type").value;
+  const pageSize = document.getElementById("page-size").value.trim() || "25"; // Use user input or default to 25
+  const selectedVocabularies =
+    returnIdType === "code" ? getSelectedVocabularies() : [];
+
+  if (!apiKey || !searchString) {
+    alert("Please enter both an API key and a search term.");
+    return;
   }
+
+  const url = new URL("https://uts-ws.nlm.nih.gov/rest/search/current");
+  url.searchParams.append("string", searchString);
+  url.searchParams.append("returnIdType", returnIdType);
+  url.searchParams.append("pageSize", pageSize); // Include the page size in the API request
+  url.searchParams.append("apiKey", apiKey);
+  if (selectedVocabularies.length > 0) {
+    url.searchParams.append("sabs", selectedVocabularies.join(","));
+  }
+
+  console.log("Page Size:", pageSize); // Debugging: Log the page size
+  console.log("API URL:", url.toString()); // Debugging: Log the full API URL
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: { Accept: "application/json" }
+    });
+    const data = await response.json();
+
+    // Handle the response data...
+    console.log("API Response:", data); // Debugging: Log the API response
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+}
   
   async function fetchConceptDetails(cui, detailType) {
     const apiKey = document.getElementById("api-key").value.trim();
@@ -407,3 +350,34 @@ async function searchUMLS() {
       infoTableBody.innerHTML = `<tr><td colspan="2">Error loading related ${relatedType}.</td></tr>`;
     }
   }
+
+// Function to toggle the visibility of collapsible content
+function toggleCollapsible(contentId) {
+  const content = document.getElementById(contentId);
+  if (content.style.display === "none" || content.style.display === "") {
+    content.style.display = "block"; // Show the content
+  } else {
+    content.style.display = "none"; // Hide the content
+  }
+}
+
+// Function to toggle the visibility of raw data and adjust layout
+function toggleRawData() {
+  const rawDataContainer = document.getElementById("raw-data-container");
+  const results = document.getElementById("results");
+  const toggleButton = document.getElementById("toggle-raw-data-button");
+
+  if (rawDataContainer.classList.contains("raw-data-hidden")) {
+    rawDataContainer.classList.remove("raw-data-hidden");
+    results.classList.remove("results-centered");
+    toggleButton.textContent = "Hide Raw Data"; // Update button text
+  } else {
+    rawDataContainer.classList.add("raw-data-hidden");
+    results.classList.add("results-centered");
+    toggleButton.textContent = "Show Raw Data"; // Update button text
+  }
+}
+
+// Add event listeners for buttons
+document.getElementById("search-button").addEventListener("click", searchUMLS);
+document.getElementById("toggle-raw-data-button").addEventListener("click", toggleRawData);
