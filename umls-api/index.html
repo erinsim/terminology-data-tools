@@ -66,6 +66,10 @@
     .results-centered {
       justify-content: center; /* Center the formatted data when raw data is hidden */
     }
+    #persistent-toggle-button {
+  margin-top: 10px;
+  display: block;
+}
   </style>
 </head>
 <body>
@@ -119,9 +123,7 @@
     </div>
 
     <div class="results" id="results">
-      <div class="results-column raw-data-container" id="raw-data-container">
-        <!-- Toggle button for collapsing/uncollapsing raw data -->
-        <button class="collapsible" id="toggle-raw-data-button" onclick="toggleRawData()">Hide Raw Data</button>
+      <div class="results-column raw-data-container raw-data-hidden" id="raw-data-container">
         <div class="raw-data-content" id="raw-data-content">
           <pre id="output">No results yet...</pre>
         </div>
@@ -131,9 +133,9 @@
         <table id="info-table">
           <thead>
             <tr>
-              <th>UI</th>
               <th>Name</th>
-              <th id="root-source-header" style="display: none;">Root Source</th>
+              <th>Root Source</th>
+              <th>UI</th>
             </tr>
           </thead>
           <tbody>
@@ -142,6 +144,8 @@
         </table>
       </div>
     </div>
+    <!-- Add a persistent "Show Raw Data" button at the bottom -->
+    <button class="collapsible" id="show-raw-data-button" onclick="toggleRawData()">Show Raw Data</button>
   </div>
   <script src="script.js"></script>
   <script>
