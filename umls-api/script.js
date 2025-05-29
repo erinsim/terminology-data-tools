@@ -413,22 +413,29 @@ async function fetchRelatedDetail(apiUrl, relatedType, rootSource) {
         resultsContainer.textContent = JSON.stringify(data, null, 2);
         infoTableBody.innerHTML = "";
 
-        if (data && typeof data === "object" && data.result && Array.isArray(data.result.results)) {
-            data.result.results.forEach((item) => {
+        if (data && typeof data === "object" && data.result) {
+            // Handle both single object and array results
+            const results = Array.isArray(data.result.results) ? data.result.results : [data.result];
+
+            results.forEach((item) => {
+                // Ensure we're accessing the correct fields from the response
                 const name = item.name || "N/A";
                 const rootSource = item.rootSource || "N/A";
                 const ui = item.ui || "N/A";
 
                 const tr = document.createElement("tr");
 
+                // Create and populate name cell
                 const nameTd = document.createElement("td");
                 nameTd.textContent = name;
                 tr.appendChild(nameTd);
 
+                // Create and populate rootSource cell
                 const rootSourceTd = document.createElement("td");
                 rootSourceTd.textContent = rootSource;
                 tr.appendChild(rootSourceTd);
 
+                // Create and populate UI cell
                 const uiTd = document.createElement("td");
                 uiTd.textContent = ui;
                 tr.appendChild(uiTd);
