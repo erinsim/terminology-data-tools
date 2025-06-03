@@ -15,7 +15,9 @@
       border: none;
       font-size: 1em;
       padding: 0;
-      text-align: left; /* Align the button text to the left */
+      text-align: left;
+      width: fit-content; /* Make button only as wide as its content */
+      display: inline-block; /* Allow button to shrink to content width */
     }
     .collapsible-content {
       display: none;
@@ -70,6 +72,28 @@
   margin-top: 10px;
   display: block;
 }
+    /* Additional styles for the instructions box */
+    .instructions-box {
+        position: fixed;
+        right: 20px;
+        top: 20px;
+        width: 300px;
+        padding: 15px;
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .instructions-box h3 {
+        margin-top: 0;
+        margin-bottom: 10px;
+    }
+
+    .instructions-box ul {
+        margin: 0;
+        padding-left: 20px;
+    }
   </style>
 </head>
 <body>
@@ -147,6 +171,15 @@
     <!-- Add a persistent "Show Raw Data" button at the bottom -->
     <button class="collapsible" id="toggle-raw-data-button" onclick="toggleRawData()">Show Raw Data</button>
   </div>
+  <div class="instructions-box">
+    <h3>How to Use This Page</h3>
+    <ul>
+        <li>Enter your UMLS API key in the text box above to get started</li>
+        <li>Type a medical term or code in the search box to find related concepts</li>
+        <li>Select specific vocabularies to narrow down your search results</li>
+        <li>Click on any CUI to see additional details and relationships</li>
+    </ul>
+</div>
   <script src="script.js"></script>
   <script>
     // Function to toggle the visibility of collapsible content
